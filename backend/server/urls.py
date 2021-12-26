@@ -14,8 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
-from models.index import handleRequest
+
+from server.controller import handle_request
 
 urlpatterns = [
-    path('api/search', handleRequest),
+    path('api/search', handle_request),
 ]
