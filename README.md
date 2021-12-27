@@ -1,5 +1,14 @@
 # TTDS Group Project
 
+## Team Members
+
+- Youguang Zhou (s2201023)
+- Yitian Wang (s2171454)
+- Haochen Qin (s2255142)
+- Ruoyi Yu (s2181173)
+- Hongyan Deng (s2193724)
+- Huajian Zhang (s2227123)
+
 ## Quick Start
 
 ### Frontend
