@@ -1,6 +1,6 @@
 /// <reference types="react-scripts" />
 
 declare interface GetSearchResultsResponseProps {
-	words: string[]
+	words: Array<{ word: string; score: string }>
 	time: string
 }
