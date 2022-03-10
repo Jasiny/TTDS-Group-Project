@@ -1,19 +1,14 @@
 import itertools
 import json
 import re
-import time
+from collections import defaultdict
 
 import numpy as np
-import pandas as pd
-import requests
-from deprecated import deprecated
 from matplotlib import pyplot as plt
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer as Lemmatizer
 from tqdm import tqdm
 
 
-def load_data_from_json(fname, use_examples=False):
+def load_data_from_json(fname, clean=False, use_examples=False):
     '''
     Load data dictionary from local json file.
     '''
@@ -30,7 +25,7 @@ def load_data_from_json(fname, use_examples=False):
                         # masking
                         examples[j] = example.replace(word, ' ')
                     data[word] = data[word].union(examples)
-    return data
+    return clean_data(data) if clean else data
 
 
 def load_pos_from_json(fname):
@@ -59,6 +54,30 @@ def load_pos_from_json(fname):
         return word2pos, words_noun, words_verb, words_adj, words_adv
 
 
+def clean_data(data):
+    '''
+    Clean up the data dictionary.
+    '''
+    data_cleaned = defaultdict(set)
+    for word, defi_set in tqdm(data.copy().items()):
+        # if phrase is too long
+        num_underline_in_word = len(word.split('_'))
+        if num_underline_in_word > 3:
+            continue
+        for defi in defi_set:
+            # if definition is too short or too long
+            num_words_in_defi = len(defi.split())
+            if num_words_in_defi <= 5 or num_words_in_defi >= 50:
+                continue
+            # remove dirty wiki
+            if defi.endswith(':'):
+                continue
+            if re.search(r'(may|can|) refer(s|) (either|) to(:|)', defi):
+                continue
+            data_cleaned[word].add(defi)
+    return data_cleaned
+
+
 def show_data_stats(data, title='', plot=False, concat=False):
     '''
     Print out statistical details of data.
@@ -83,6 +102,9 @@ def show_data_stats(data, title='', plot=False, concat=False):
 
 
 def search(query, knn, y, n=1000):
+    '''
+    Search results based on query with fitted knn, and return words list.
+    '''
     dist, nbrs = knn.kneighbors(query, n_neighbors=n)
     return list(np.array(y)[nbrs[0]])
 

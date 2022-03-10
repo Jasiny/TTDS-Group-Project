@@ -6,6 +6,7 @@ from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 from scipy.sparse import csr_matrix
 from sklearn.preprocessing import normalize
+from tqdm import tqdm
 
 
 class TfidfVectorizer():
@@ -56,7 +57,7 @@ class TfidfVectorizer():
             self._vocab2id[word] = index
         ########## tf-idf matrix ##########
         tfidf_matrix = csr_matrix((self.num_docs, self.num_dims)).tolil()  # tolil(): List of Lists
-        for word_index, word in enumerate(self.inv_index.keys()):
+        for word_index, word in enumerate(tqdm(self.inv_index.keys())):
             for doc in self.inv_index[word][1].keys():
                 tf = self.inv_index[word][1][doc]
                 tfidf_matrix[doc, word_index] = (1 + np.log10(tf)) * self._idf[word]
