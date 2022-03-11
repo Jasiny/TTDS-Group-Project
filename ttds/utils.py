@@ -5,7 +5,10 @@ from collections import defaultdict
 
 import numpy as np
 from matplotlib import pyplot as plt
+from numpy.random import default_rng
 from tqdm import tqdm
+
+rng = default_rng()
 
 
 def load_data_from_json(fname, clean=False, use_examples=False):
@@ -141,4 +144,37 @@ def evaluate(y_pred, y_gold):
     median_rank = np.median(pred_rank)
     var_rank = np.sqrt(np.var(pred_rank))
 
+    print(f'acc@1: {round(acc_1, 2)}')
+    print(f'acc@10: {round(acc_10, 2)}')
+    print(f'acc@100: {round(acc_100, 2)}')
+    print(f'median rank: {int(median_rank)}')
+    print(f'var rank: {int(var_rank)}')
+
     return acc_1, acc_10, acc_100, median_rank, var_rank
+
+
+def split_seen_unseen(data, num=500):
+    '''
+    Split a data dictioinary into seen and unseen sub-dictionaries
+    '''
+    all_definitions = np.array(list(itertools.chain(*data.values())))
+    indices_500 = rng.choice(len(all_definitions), num, replace=False)
+    unseen_500 = all_definitions[indices_500]
+
+    data_train = defaultdict(set)
+    data_seen_500 = defaultdict(set)
+    data_unseen_500 = defaultdict(set)
+    count_unseen = 0
+    count_seen = 0
+    for word, defi_set in (data.items()):
+        for defi in defi_set:
+            if defi in unseen_500:
+                if count_unseen < num:
+                    data_unseen_500[word].add(defi)
+                    count_unseen += 1
+            else:
+                if count_seen < num:
+                    data_seen_500[word].add(defi)
+                    count_seen += 1
+                data_train[word].add(defi)
+    return data_train, data_seen_500, data_unseen_500
