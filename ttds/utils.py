@@ -142,15 +142,15 @@ def evaluate(y_pred, y_gold):
     acc_10 /= length
     acc_100 /= length
     median_rank = np.median(pred_rank)
-    var_rank = np.sqrt(np.var(pred_rank))
+    rank_sem = np.sqrt(np.var(pred_rank)) / np.sqrt(len(pred_rank))
 
     print(f'acc@1: {round(acc_1, 2)}')
     print(f'acc@10: {round(acc_10, 2)}')
     print(f'acc@100: {round(acc_100, 2)}')
-    print(f'median rank: {int(median_rank)}')
-    print(f'var rank: {int(var_rank)}')
+    print(f'median rank: {round(median_rank)}')
+    print(f'standard error of mean rank: {round(rank_sem)}')
 
-    return acc_1, acc_10, acc_100, median_rank, var_rank
+    return acc_1, acc_10, acc_100, median_rank, rank_sem
 
 
 def split_seen_unseen(data, num=500):
