@@ -1,15 +1,16 @@
-import CloseIcon from '@mui/icons-material/Close'
-import SettingsIcon from '@mui/icons-material/Settings'
-import Box from '@mui/material/Box'
-import Dialog from '@mui/material/Dialog'
-import DialogContent from '@mui/material/DialogContent'
-import DialogTitle from '@mui/material/DialogTitle'
-import IconButton from '@mui/material/IconButton'
+import { Close, Settings } from '@mui/icons-material'
+import {
+	Box,
+	Dialog,
+	DialogContent,
+	DialogTitle,
+	IconButton,
+	Switch,
+	Tab,
+	Tabs,
+	Typography,
+} from '@mui/material'
 import { styled } from '@mui/material/styles'
-import Switch from '@mui/material/Switch'
-import Tab from '@mui/material/Tab'
-import Tabs from '@mui/material/Tabs'
-import Typography from '@mui/material/Typography'
 import React, { ChangeEvent, SyntheticEvent, useState } from 'react'
 import { EngineType } from '../utils/enums'
 
@@ -51,7 +52,7 @@ const SettingDialogTitle = ({ children, onClose, ...other }: DialogTitleProps) =
 					color: (theme) => theme.palette.grey[500],
 				}}
 			>
-				<CloseIcon />
+				<Close />
 			</IconButton>
 		) : null}
 	</DialogTitle>
@@ -72,7 +73,7 @@ const SettingButton = () => {
 		<>
 			{/* Icon */}
 			<IconButton size="large" onClick={() => setIsDialogOpen(true)}>
-				<SettingsIcon />
+				<Settings />
 			</IconButton>
 			{/* Dialog */}
 			<SettingDialog
