@@ -8,8 +8,6 @@ from matplotlib import pyplot as plt
 from numpy.random import default_rng
 from tqdm import tqdm
 
-rng = default_rng()
-
 
 def load_data_from_json(fname, clean=False, use_examples=False):
     '''
@@ -157,24 +155,30 @@ def split_seen_unseen(data, num=500):
     '''
     Split a data dictioinary into seen and unseen sub-dictionaries
     '''
-    all_definitions = np.array(list(itertools.chain(*data.values())))
-    indices_500 = rng.choice(len(all_definitions), num, replace=False)
-    unseen_500 = all_definitions[indices_500]
+    all_defi = np.array(list(itertools.chain(*data.values())))
+    rng = default_rng(0)
+    unseen_500_defi = all_defi[rng.choice(len(all_defi), num, replace=False)]
+
+    train_defi = np.setdiff1d(all_defi, unseen_500_defi)
+    rng = default_rng(2022)
+    seen_500_defi = train_defi[rng.choice(len(train_defi), num, replace=False)]
 
     data_train = defaultdict(set)
     data_seen_500 = defaultdict(set)
     data_unseen_500 = defaultdict(set)
     count_unseen = 0
     count_seen = 0
-    for word, defi_set in (data.items()):
+    for word, defi_set in tqdm(data.items()):
         for defi in defi_set:
-            if defi in unseen_500:
+            if defi in unseen_500_defi:
                 if count_unseen < num:
                     data_unseen_500[word].add(defi)
                     count_unseen += 1
-            else:
+            elif defi in seen_500_defi:
                 if count_seen < num:
                     data_seen_500[word].add(defi)
                     count_seen += 1
+                data_train[word].add(defi)
+            else:
                 data_train[word].add(defi)
     return data_train, data_seen_500, data_unseen_500
