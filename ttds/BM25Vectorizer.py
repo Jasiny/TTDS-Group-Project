@@ -57,14 +57,14 @@ class BM25Vectorizer():
             Ld.append(len(list(self.data.values())[n]))
         self.L = np.sum(Ld)/N
         ########## extract idf, as it is shared for every term ##########
-        for index, word in enumerate(tqdm(self.inv_index.keys())):
+        for index, word in enumerate(self.inv_index.keys()):
             df = self.inv_index[word][0]
             self._idf[word] = np.log10((N - df + 0.5) / (df + 0.5))
             self._vocab2id[word] = index
         ########## BM25 matrix ##########
         k = 1.5
         BM25_matrix = csr_matrix((self.num_docs, self.num_dims)).tolil()  # tolil(): List of Lists
-        for word_index, word in enumerate(self.inv_index.keys()):
+        for word_index, word in enumerate(tqdm(self.inv_index.keys())):
             for doc in self.inv_index[word][1].keys():
                 tf = self.inv_index[word][1][doc]
                 BM25_matrix[doc, word_index] = (tf/(k*(Ld[doc]/self.L) + tf + 0.5)) * self._idf[word]
