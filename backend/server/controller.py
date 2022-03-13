@@ -6,9 +6,10 @@ import numpy as np
 import torch
 from django.conf import settings
 from django.http import JsonResponse
-from faiss import METRIC_INNER_PRODUCT, index_factory, normalize_L2
+from faiss import METRIC_INNER_PRODUCT, index_factory
 from faiss.swigfaiss import IndexFlat
 from sklearn.neighbors import NearestNeighbors
+from sklearn.preprocessing import normalize
 
 from server.utils import *
 
@@ -40,7 +41,7 @@ with open(os.path.join(settings.BASE_DIR, 'models/neural/name'), 'rb') as f:
     neural_y = pickle.load(f)
 with open(os.path.join(settings.BASE_DIR, 'models/neural/all-word2'), 'rb') as f:
     neural_X_embed = np.array(pickle.load(f)).astype(np.float32)  # (117659, 768)
-    normalize_L2(neural_X_embed)
+    neural_X_embed = normalize(neural_X_embed)
 
 neural_index = index_factory(neural_X_embed.shape[1], "Flat", METRIC_INNER_PRODUCT)
 neural_index.add(neural_X_embed)
@@ -68,7 +69,7 @@ def handle_request(request):
     # y = traditional_y
 
     query_vec = np.array(get_embed(query, neural_model, neural_tokenizer)).astype(np.float32)
-    normalize_L2(query_vec)
+    query_vec = normalize(query_vec)
 
     words = search(query_vec, neural_index, neural_y)
     # words = search(query_vec, knn, y)
