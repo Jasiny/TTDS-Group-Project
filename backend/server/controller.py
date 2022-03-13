@@ -21,12 +21,12 @@ with open(os.path.join(settings.BASE_DIR, 'data/data_5d.json'), 'r') as f:
 
 
 # load traditional model
-# with open(os.path.join(settings.BASE_DIR, 'models/traditional.pkl'), 'rb') as f:
-#     traditional = pickle.load(f)
+with open(os.path.join(settings.BASE_DIR, 'models/traditional.pkl'), 'rb') as f:
+    traditional = pickle.load(f)
 
-# traditional_model = traditional['model']
-# traditional_knn = traditional['knn']
-# traditional_y = traditional['y']
+traditional_model = traditional['model']
+traditional_knn = traditional['knn']
+traditional_y = traditional['y']
 
 
 # load neural model
@@ -50,29 +50,32 @@ neural_index.add(neural_X_embed)
 def search(query, model, y, n=100):
     if type(model) == NearestNeighbors:
         dist, nbrs = model.kneighbors(query, n_neighbors=n)
+        similarity = 1 - dist
     elif type(model) == IndexFlat:
-        dist, nbrs = model.search(query, n)
+        similarity, nbrs = model.search(query, n)
     words = [{
         'word': y[i],
         'defi': list(data_dict[y[i]]) if y[i] in data_dict else ['Definition Not Found.'],
         'score':f'{score:.3f}'
-    } for i, score in zip(nbrs[0], 1-dist[0])]
+    } for i, score in zip(nbrs[0], similarity[0])]
     return words
 
 
 def handle_request(request):
     query = request.GET['query']
+    engine = request.GET['engine']
     sent_time = request.GET['sentTime']
 
-    # query_vec = traditional_model.transform(query)
-    # knn = traditional_knn
-    # y = traditional_y
+    if engine == 'Traditional':
+        query_vec = traditional_model.transform(query)
+        model = traditional_knn
+        y = traditional_y
+    elif engine == 'Neural':
+        query_vec = normalize(np.array(get_embed(query, neural_model, neural_tokenizer)).astype(np.float32))
+        model = neural_index
+        y = neural_y
 
-    query_vec = np.array(get_embed(query, neural_model, neural_tokenizer)).astype(np.float32)
-    query_vec = normalize(query_vec)
-
-    words = search(query_vec, neural_index, neural_y)
-    # words = search(query_vec, knn, y)
+    words = search(query_vec, model, y)
 
     res = {
         'words': words,
