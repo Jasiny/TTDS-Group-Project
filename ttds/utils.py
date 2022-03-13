@@ -1,5 +1,6 @@
 import itertools
 import json
+import pickle
 import re
 from collections import defaultdict
 
@@ -7,6 +8,25 @@ import numpy as np
 from matplotlib import pyplot as plt
 from numpy.random import default_rng
 from tqdm import tqdm
+
+
+def load_data():
+    with open('data/data.pkl', 'rb') as f:
+        data = pickle.load(f)
+
+    with open('data/data_train.pkl', 'rb') as f:
+        data_train = pickle.load(f)
+
+    with open('data/data_seen_500.pkl', 'rb') as f:
+        data_seen_500 = pickle.load(f)
+
+    with open('data/data_unseen_500.pkl', 'rb') as f:
+        data_unseen_500 = pickle.load(f)
+
+    with open('data/data_test.pkl', 'rb') as f:
+        data_test = pickle.load(f)
+
+    return data, data_train, data_seen_500, data_unseen_500, data_test
 
 
 def load_data_from_json(fname, clean=False, use_examples=False):
@@ -92,8 +112,8 @@ def show_data_stats(data, title='', plot=False, concat=False):
     print(f'num of docs: {len(all_defi)}')
     print(f'max doc length: {np.max(l)}')
     print(f'min doc length: {np.min(l)}')
-    print(f'mean doc length: {round(np.mean(l), 2)}')
-    print(f'median doc length: {np.median(l)}')
+    print(f'mean doc length: {round(np.mean(l))}')
+    print(f'median doc length: {round(np.median(l))}')
     if plot:
         plt.title(title)
         plt.xlabel('doc length')
