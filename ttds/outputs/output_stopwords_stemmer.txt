@@ -1,0 +1,28 @@
+=================================
+stop_words: True, stemmer: True
+acc@1: 0.19
+acc@10: 0.45
+acc@100: 0.76
+median rank: 12
+standard error of mean rank: 11
+=================================
+stop_words: True, stemmer: False
+acc@1: 0.22
+acc@10: 0.5
+acc@100: 0.79
+median rank: 10
+standard error of mean rank: 11
+=================================
+stop_words: False, stemmer: True
+acc@1: 0.19
+acc@10: 0.47
+acc@100: 0.77
+median rank: 12
+standard error of mean rank: 11
+=================================
+stop_words: False, stemmer: False
+acc@1: 0.26
+acc@10: 0.52
+acc@100: 0.81
+median rank: 8
+standard error of mean rank: 10
