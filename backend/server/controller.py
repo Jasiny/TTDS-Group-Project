@@ -55,7 +55,7 @@ def search(query, model, y, n=100):
         similarity, nbrs = model.search(query, n)
     words = [{
         'word': y[i],
-        'defi': list(data_dict[y[i]]) if y[i] in data_dict else ['Definition Not Found.'],
+        'defi': list(data_dict[(y[i].replace('-', '_'))]) if y[i].replace('-', '_') in data_dict else ['Definition Not Found.'],
         'score':f'{score:.3f}'
     } for i, score in zip(nbrs[0], similarity[0])]
     return words
