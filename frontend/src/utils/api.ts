@@ -8,3 +8,6 @@ export const getSearchResults = (
 	engine: EngineType
 ): Promise<GetSearchResultsResponseProps> =>
 	API.get('search', { params: { query, engine, sentTime: Date.now() } }).then(({ data }) => data)
+
+export const postFeedback = (word: string, feedback: number): Promise<PostFeedbackResponseProps> =>
+	API.get('feedback', { params: { word, feedback } }).then(({ data }) => data)

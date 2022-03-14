@@ -1,6 +1,7 @@
 import json
 import os
 import pickle
+from collections import defaultdict
 
 import numpy as np
 import torch
@@ -12,6 +13,10 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import normalize
 
 from server.utils import *
+
+# for feedback use
+feedback_map_good = defaultdict(int)
+feedback_map_bad = defaultdict(int)
 
 # load data
 data_dict = {}
@@ -64,7 +69,7 @@ def search(query, model, y, n=500):
     return words
 
 
-def handle_request(request):
+def handle_search_request(request):
     query = request.GET['query']
     engine = request.GET['engine']
     sent_time = request.GET['sentTime']
@@ -86,3 +91,13 @@ def handle_request(request):
     }
 
     return JsonResponse(res)
+
+
+def handle_feedback_request(request):
+    word = request.GET['word']
+    feedback = request.GET['feedback']
+    if feedback == 1:
+        feedback_map_good[word] += 1
+    else:
+        feedback_map_bad[word] += 1
+    return JsonResponse({'text': 'success'})

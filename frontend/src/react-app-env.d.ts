@@ -11,6 +11,10 @@ declare interface GetSearchResultsResponseProps {
 	time: string
 }
 
+declare interface PostFeedbackResponseProps {
+	feedback: number
+}
+
 declare interface FilterProps {
 	engineType: EngineType
 	wordType: WordType

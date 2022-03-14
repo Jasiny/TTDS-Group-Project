@@ -15,8 +15,9 @@ Including another URLconf
 """
 from django.urls import path
 
-from server.controller import handle_request
+from server.controller import handle_feedback_request, handle_search_request
 
 urlpatterns = [
-    path('api/search', handle_request),
+    path('api/search', handle_search_request),
+    path('api/feedback', handle_feedback_request),
 ]
