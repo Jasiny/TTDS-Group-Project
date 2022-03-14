@@ -1,2 +1,9 @@
-Django==4.0
-django-cors-headers==3.10.1
+Django
+django-cors-headers
+faiss-cpu
+nltk
+numpy
+scikit-learn
+scipy
+torch
+transformers
