@@ -14,7 +14,7 @@ const HomePage = () => {
 	const handleFilterChanged = (engineType: EngineType) => setEngineType(engineType)
 
 	return (
-		<main className="relative flex flex-col items-center space-y-4 sm:space-y-6">
+		<main className="relative flex flex-col items-center mb-24 space-y-4 sm:space-y-6">
 			{/* setting button at right top corner */}
 			<div className="absolute right-4 top-1">
 				<SettingButton />
