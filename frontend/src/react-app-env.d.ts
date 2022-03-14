@@ -11,6 +11,12 @@ declare interface GetSearchResultsResponseProps {
 	time: string
 }
 
+declare interface FilterProps {
+	engineType: EngineType
+	wordType: WordType
+	posType: POSType
+}
+
 declare interface TabPanelProps {
 	children?: React.ReactNode
 	index: number

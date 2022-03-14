@@ -1,34 +1,79 @@
 import { Switch, Typography } from '@mui/material'
-import React, { ChangeEvent, useState } from 'react'
-import { EngineType } from '../utils/enums'
+import MenuItem from '@mui/material/MenuItem'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
+import React, { ChangeEvent, useEffect, useState } from 'react'
+import { EngineType, POSType, WordType } from '../utils/enums'
 
 interface FilterBarProps {
-	onFilterChanged: (engineType: EngineType) => void
+	onFilterChanged: (filter: FilterProps) => void
 }
 
 const FilterBar = ({ onFilterChanged }: FilterBarProps) => {
-	const [engineType, setEngineType] = useState(EngineType.Neural)
 	const [checked, setChecked] = useState(true)
+	const [filter, setFilter] = useState({
+		engineType: EngineType.Neural,
+		wordType: WordType.All,
+		posType: POSType.All,
+	})
 
-	const handleChange = ({ target: { checked } }: ChangeEvent<HTMLInputElement>) => {
+	useEffect(() => {
+		onFilterChanged(filter)
+	}, [filter])
+
+	const handleSwitchChange = ({ target: { checked } }: ChangeEvent<HTMLInputElement>) => {
 		const engine = checked ? EngineType.Neural : EngineType.Traditional
 		setChecked(checked)
-		setEngineType(engine)
-		onFilterChanged(engine)
+		setFilter({ ...filter, engineType: engine })
 	}
 
 	return (
-		<div className="flex items-center justify-between">
-			<div>
-				<Typography variant="h6" gutterBottom component="span">
+		<section className="flex items-center justify-between space-x-20">
+			<div className="space-x-4">
+				<Typography variant="h6" component="span">
 					<span>Current Engine:</span>
-					<span className={engineType == EngineType.Neural ? 'text-purple-700' : ''}>
-						{` ${engineType} IR System`}
+					<span
+						className={filter.engineType == EngineType.Neural ? 'text-purple-700' : ''}
+					>
+						{` ${filter.engineType} IR System`}
 					</span>
 				</Typography>
-				<Switch checked={checked} onChange={handleChange} />
+				<Switch checked={checked} onChange={handleSwitchChange} />
 			</div>
-		</div>
+			<div className="space-x-4">
+				<Typography variant="h6" component="span">
+					<span>Type:</span>
+				</Typography>
+				<Select
+					value={filter.wordType}
+					sx={{ width: 100 }}
+					onChange={({ target: { value } }: SelectChangeEvent) =>
+						setFilter({ ...filter, wordType: value as WordType })
+					}
+				>
+					<MenuItem value={WordType.All}>All</MenuItem>
+					<MenuItem value={WordType.Word}>{WordType.Word}</MenuItem>
+					<MenuItem value={WordType.Phrase}>{WordType.Phrase}</MenuItem>
+				</Select>
+			</div>
+			<div className="space-x-4">
+				<Typography variant="h6" component="span">
+					<span>POS:</span>
+				</Typography>
+				<Select
+					value={filter.posType}
+					sx={{ width: 100 }}
+					onChange={({ target: { value } }: SelectChangeEvent) =>
+						setFilter({ ...filter, posType: value as POSType })
+					}
+				>
+					<MenuItem value={POSType.All}>All</MenuItem>
+					<MenuItem value={POSType.Noun}>{POSType.Noun}</MenuItem>
+					<MenuItem value={POSType.Verb}>{POSType.Verb}</MenuItem>
+					<MenuItem value={POSType.Adj}>{POSType.Adj}</MenuItem>
+					<MenuItem value={POSType.Adv}>{POSType.Adv}</MenuItem>
+				</Select>
+			</div>
+		</section>
 	)
 }
 

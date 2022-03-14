@@ -3,15 +3,19 @@ import FilterBar from '../components/FilterBar'
 import SearchBar from '../components/SearchBar'
 import SearchResults from '../components/SearchResults'
 import SettingButton from '../components/SettingButton'
-import { EngineType } from '../utils/enums'
+import { EngineType, POSType, WordType } from '../utils/enums'
 
 const HomePage = () => {
 	const [results, setResults] = useState<GetSearchResultsResponseProps>()
-	const [engineType, setEngineType] = useState<EngineType>(EngineType.Neural)
+	const [filter, setFilter] = useState({
+		engineType: EngineType.Neural,
+		wordType: WordType.All,
+		posType: POSType.All,
+	})
 
 	const handleResultsRetrieved = (results: GetSearchResultsResponseProps) => setResults(results)
 
-	const handleFilterChanged = (engineType: EngineType) => setEngineType(engineType)
+	const handleFilterChanged = (filter: FilterProps) => setFilter(filter)
 
 	return (
 		<main className="relative flex flex-col items-center mb-24 space-y-4 sm:space-y-6">
@@ -29,11 +33,15 @@ const HomePage = () => {
 			>
 				Find my words
 			</div>
-			<SearchBar engine={engineType} onResultsRetrieved={handleResultsRetrieved} />
+			<SearchBar engine={filter.engineType} onResultsRetrieved={handleResultsRetrieved} />
 			{results && (
 				<>
 					<FilterBar onFilterChanged={handleFilterChanged} />
-					<SearchResults results={results} />
+					<SearchResults
+						wordType={filter.wordType}
+						posType={filter.posType}
+						results={results}
+					/>
 				</>
 			)}
 		</main>

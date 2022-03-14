@@ -9,3 +9,9 @@
 	max-width: 500px !important;
 	padding: 0px !important;
 }
+
+.MuiSelect-select {
+	padding-top: 8px !important;
+	padding-bottom: 8px !important;
+	padding-left: 12px !important;
+}

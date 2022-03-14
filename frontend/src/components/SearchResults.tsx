@@ -1,12 +1,15 @@
 import { ClickAwayListener, Fade, Tooltip } from '@mui/material'
 import React, { useState } from 'react'
+import { POSType, WordType } from '../utils/enums'
 import DefinitionCard from './DefinitionCard'
 
 interface SearchResultsProps {
+	wordType: WordType
+	posType: POSType
 	results: GetSearchResultsResponseProps
 }
 
-const SearchResults = ({ results: { words } }: SearchResultsProps) => {
+const SearchResults = ({ wordType, posType, results: { words } }: SearchResultsProps) => {
 	const [clickedIndex, setClickedIndex] = useState<number | undefined>(undefined)
 
 	const prob2color = (prob: number) =>
@@ -18,6 +21,22 @@ const SearchResults = ({ results: { words } }: SearchResultsProps) => {
 		<section className="grid grid-cols-3 gap-y-1 sm:grid-flow-col sm:grid-rows-25 md:grid-rows-20">
 			{words
 				.filter(({ word }, i, a) => (a[i - 1] ? word !== a[i - 1].word : true))
+				.filter(({ word }) => {
+					const isPhrase = word.includes('_')
+					switch (wordType) {
+						case WordType.All:
+							return true
+						case WordType.Phrase:
+							return isPhrase
+						case WordType.Word:
+							return !isPhrase
+						default:
+							break
+					}
+				})
+				.filter(({ pos }) =>
+					posType == POSType.All ? true : pos.includes(posType.toLowerCase())
+				)
 				.slice(0, 100)
 				.map(({ word, pos, defitions, score }, index) => (
 					<div
