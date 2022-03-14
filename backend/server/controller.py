@@ -72,7 +72,6 @@ def search(query, model, y, n=500):
 def handle_search_request(request):
     query = request.GET['query']
     engine = request.GET['engine']
-    sent_time = request.GET['sentTime']
 
     if engine == 'Traditional':
         query_vec = traditional_model.transform(query)
@@ -85,12 +84,7 @@ def handle_search_request(request):
 
     words = search(query_vec, model, y)
 
-    res = {
-        'words': words,
-        'time': get_res_time(sent_time)
-    }
-
-    return JsonResponse(res)
+    return JsonResponse({'words': words})
 
 
 def handle_feedback_request(request):

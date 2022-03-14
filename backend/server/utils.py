@@ -4,13 +4,6 @@ import torch
 import torch.nn.functional as F
 
 
-def get_res_time(time):
-    # dividing 1000 is because js time returns the timestamp in milliseconds
-    sent_time = datetime.fromtimestamp(int(time) / 1000.0)
-    rcvd_time = datetime.now()
-    return (rcvd_time-sent_time).total_seconds()
-
-
 def mean_pooling(model_output, attention_mask):
     # Mean Pooling - Take attention mask into account for correct averaging
     token_embeddings = model_output[0]  # First element of model_output contains all token embeddings
