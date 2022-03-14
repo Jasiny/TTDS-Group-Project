@@ -15,10 +15,12 @@ from server.utils import *
 
 # load data
 data_dict = {}
-with open(os.path.join(settings.BASE_DIR, 'data/data_5d.json'), 'r') as f:
+with open(os.path.join(settings.BASE_DIR, 'data/data_final.json'), 'r') as f:
     for i in json.load(f):
         data_dict[i['word']] = set(i['definitions'])
 
+with open(os.path.join(settings.BASE_DIR, 'data/word2pos.json'), 'r') as f:
+    word2pos = json.load(f)
 
 # load traditional model
 with open(os.path.join(settings.BASE_DIR, 'models/traditional.pkl'), 'rb') as f:
@@ -47,7 +49,7 @@ neural_index = index_factory(neural_X_embed.shape[1], "Flat", METRIC_INNER_PRODU
 neural_index.add(neural_X_embed)
 
 
-def search(query, model, y, n=100):
+def search(query, model, y, n=500):
     if type(model) == NearestNeighbors:
         dist, nbrs = model.kneighbors(query, n_neighbors=n)
         similarity = 1 - dist
@@ -55,7 +57,8 @@ def search(query, model, y, n=100):
         similarity, nbrs = model.search(query, n)
     words = [{
         'word': y[i],
-        'defi': list(data_dict[(y[i].replace('-', '_'))]) if y[i].replace('-', '_') in data_dict else ['Definition Not Found.'],
+        'pos': word2pos[(y[i].replace('-', '_'))] if y[i].replace('-', '_') in word2pos else [],
+        'defitions': list(data_dict[(y[i].replace('-', '_'))]) if y[i].replace('-', '_') in data_dict else ['Definition Not Found.'],
         'score':f'{score:.3f}'
     } for i, score in zip(nbrs[0], similarity[0])]
     return words

@@ -1,7 +1,13 @@
 /// <reference types="react-scripts" />
 
+declare interface WordProps {
+	word: string
+	pos: string[]
+	defitions: string[]
+	score: string
+}
 declare interface GetSearchResultsResponseProps {
-	words: Array<{ word: string; defi: string[]; score: string }>
+	words: WordProps[]
 	time: string
 }
 

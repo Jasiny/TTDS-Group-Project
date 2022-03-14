@@ -2,12 +2,14 @@ import { Alert, CircularProgress, Snackbar, Stack } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { getSearchResults } from '../utils/api'
+import { EngineType } from '../utils/enums'
 
 interface SearchBarProps {
+	engine: EngineType
 	onResultsRetrieved: (results: GetSearchResultsResponseProps) => void
 }
 
-const SearchBar = ({ onResultsRetrieved }: SearchBarProps) => {
+const SearchBar = ({ engine, onResultsRetrieved }: SearchBarProps) => {
 	const [input, setInput] = useState<string | undefined>()
 	const [query, setQuery] = useState<string | undefined>()
 	const [showErrorMsg, setShowErrorMsg] = useState(false)
@@ -15,7 +17,7 @@ const SearchBar = ({ onResultsRetrieved }: SearchBarProps) => {
 		data: results,
 		isError,
 		isLoading,
-	} = useQuery(['search', query], () => getSearchResults(query), {
+	} = useQuery(['search', query, engine], () => getSearchResults(query, engine), {
 		retry: false,
 		enabled: !!query,
 	})

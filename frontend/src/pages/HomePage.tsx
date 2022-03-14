@@ -1,15 +1,20 @@
 import React, { useState } from 'react'
+import FilterBar from '../components/FilterBar'
 import SearchBar from '../components/SearchBar'
 import SearchResults from '../components/SearchResults'
 import SettingButton from '../components/SettingButton'
+import { EngineType } from '../utils/enums'
 
 const HomePage = () => {
 	const [results, setResults] = useState<GetSearchResultsResponseProps>()
+	const [engineType, setEngineType] = useState<EngineType>(EngineType.Neural)
 
 	const handleResultsRetrieved = (results: GetSearchResultsResponseProps) => setResults(results)
 
+	const handleFilterChanged = (engineType: EngineType) => setEngineType(engineType)
+
 	return (
-		<main className="relative flex flex-col items-center space-y-4 sm:space-y-8">
+		<main className="relative flex flex-col items-center space-y-4 sm:space-y-6">
 			{/* setting button at right top corner */}
 			<div className="absolute right-4 top-1">
 				<SettingButton />
@@ -24,8 +29,13 @@ const HomePage = () => {
 			>
 				Find my words
 			</div>
-			<SearchBar onResultsRetrieved={handleResultsRetrieved} />
-			{results && <SearchResults results={results} />}
+			<SearchBar engine={engineType} onResultsRetrieved={handleResultsRetrieved} />
+			{results && (
+				<>
+					<FilterBar onFilterChanged={handleFilterChanged} />
+					<SearchResults results={results} />
+				</>
+			)}
 		</main>
 	)
 }

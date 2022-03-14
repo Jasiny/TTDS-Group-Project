@@ -5,14 +5,12 @@ import {
 	DialogContent,
 	DialogTitle,
 	IconButton,
-	Switch,
 	Tab,
 	Tabs,
 	Typography,
 } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import React, { ChangeEvent, SyntheticEvent, useState } from 'react'
-import { EngineType } from '../utils/enums'
+import React, { SyntheticEvent, useState } from 'react'
 
 const TabPanel = ({ children, value, index, ...other }: TabPanelProps) => (
 	<div
@@ -61,13 +59,6 @@ const SettingDialogTitle = ({ children, onClose, ...other }: DialogTitleProps) =
 const SettingButton = () => {
 	const [tabvalue, setTabValue] = useState(0)
 	const [isDialogOpen, setIsDialogOpen] = useState(false)
-	const [engineType, setEngineType] = useState(EngineType.Neural)
-	const [checked, setChecked] = useState(true)
-
-	const handleChange = ({ target: { checked } }: ChangeEvent<HTMLInputElement>) => {
-		setChecked(checked)
-		setEngineType(checked ? EngineType.Neural : EngineType.Traditional)
-	}
 
 	return (
 		<>
@@ -110,19 +101,9 @@ const SettingButton = () => {
 						</Tabs>
 						{/* ================================================================ */}
 						<TabPanel value={tabvalue} index={0}>
-							<div className="flex items-center justify-between">
-								<Typography variant="h6" gutterBottom component="span">
-									<span>Current Engine:</span>
-									<span
-										className={
-											engineType == EngineType.Neural ? 'text-purple-700' : ''
-										}
-									>
-										{` ${engineType} IR System`}
-									</span>
-								</Typography>
-								<Switch checked={checked} onChange={handleChange} />
-							</div>
+							<Typography variant="h6" gutterBottom component="div">
+								PlaceHolder
+							</Typography>
 						</TabPanel>
 						<TabPanel value={tabvalue} index={1}>
 							<Typography variant="h6" gutterBottom component="div">

@@ -3,3 +3,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.MuiTooltip-tooltip {
+	background-color: white !important;
+	max-width: 500px !important;
+	padding: 0px !important;
+}
