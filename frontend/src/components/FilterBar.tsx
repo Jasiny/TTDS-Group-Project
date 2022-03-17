@@ -1,5 +1,5 @@
-import { Switch, Typography } from '@mui/material'
-import MenuItem from '@mui/material/MenuItem'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import { IconButton, MenuItem, Switch, Typography } from '@mui/material'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { EngineType, POSType, WordType } from '../utils/enums'
@@ -18,6 +18,7 @@ const FilterBar = ({ onFilterChanged }: FilterBarProps) => {
 
 	useEffect(() => {
 		onFilterChanged(filter)
+		setChecked(filter.engineType == EngineType.Neural)
 	}, [filter])
 
 	const handleSwitchChange = ({ target: { checked } }: ChangeEvent<HTMLInputElement>) => {
@@ -73,6 +74,17 @@ const FilterBar = ({ onFilterChanged }: FilterBarProps) => {
 					<MenuItem value={POSType.Adv}>{POSType.Adv}</MenuItem>
 				</Select>
 			</div>
+			<IconButton
+				onClick={() =>
+					setFilter({
+						engineType: EngineType.Neural,
+						wordType: WordType.All,
+						posType: POSType.All,
+					})
+				}
+			>
+				<RefreshIcon color="primary" titleAccess="Reset to default" />
+			</IconButton>
 		</section>
 	)
 }

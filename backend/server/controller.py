@@ -54,6 +54,16 @@ neural_index = index_factory(neural_X_embed.shape[1], "Flat", METRIC_INNER_PRODU
 neural_index.add(neural_X_embed)
 
 
+def adjust(word, score):
+    num_good = feedback_map_good[word] + 1
+    num_bad = feedback_map_bad[word] + 1
+    num = num_good + num_bad
+    score_good = np.tanh(num_good/num)
+    score_bad = np.tanh(num_bad/num)
+    weight = 0.5 * (score_good - score_bad) + 1
+    return weight * score
+
+
 def search(query, model, y, n=500):
     if type(model) == NearestNeighbors:
         dist, nbrs = model.kneighbors(query, n_neighbors=n)
@@ -64,7 +74,7 @@ def search(query, model, y, n=500):
         'word': y[i],
         'pos': word2pos[(y[i].replace('-', '_'))] if y[i].replace('-', '_') in word2pos else [],
         'defitions': list(data_dict[(y[i].replace('-', '_'))]) if y[i].replace('-', '_') in data_dict else ['Definition Not Found.'],
-        'score':f'{score:.3f}'
+        'score':f'{adjust(y[i], score):.3f}'
     } for i, score in zip(nbrs[0], similarity[0])]
     return words
 
@@ -90,8 +100,8 @@ def handle_search_request(request):
 def handle_feedback_request(request):
     word = request.GET['word']
     feedback = request.GET['feedback']
-    if feedback == 1:
+    if feedback == '1':
         feedback_map_good[word] += 1
-    else:
+    elif feedback == '-1':
         feedback_map_bad[word] += 1
     return JsonResponse({'text': 'success'})

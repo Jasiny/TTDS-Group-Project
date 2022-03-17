@@ -17,10 +17,14 @@ const SearchResults = ({ wordType, posType, results: { words } }: SearchResultsP
 			? `linear-gradient(to left, rgba(70, 130, 180, ${prob / 50}) ${prob}%, white ${prob}%)`
 			: undefined
 
+	const removeDuplicates = (arr: WordProps[]) => {
+		const words = arr.map((a) => a.word)
+		return arr.filter(({ word }, i) => !words.includes(word, i + 1))
+	}
+
 	return (
 		<section className="grid grid-cols-3 gap-y-1 sm:grid-flow-col sm:grid-rows-25 md:grid-rows-20">
-			{words
-				.filter(({ word }, i, a) => (a[i - 1] ? word !== a[i - 1].word : true))
+			{removeDuplicates(words)
 				.filter(({ word }) => {
 					const isPhrase = word.includes('_')
 					switch (wordType) {
@@ -38,6 +42,7 @@ const SearchResults = ({ wordType, posType, results: { words } }: SearchResultsP
 					posType == POSType.All ? true : pos.includes(posType.toLowerCase())
 				)
 				.slice(0, 100)
+				.sort((a, b) => Number(b.score) - Number(a.score))
 				.map(({ word, pos, defitions, score }, index) => (
 					<div
 						key={index}
@@ -64,9 +69,12 @@ const SearchResults = ({ wordType, posType, results: { words } }: SearchResultsP
 									onClick={() => setClickedIndex(index)}
 									className="flex-1 hover:cursor-pointer hover:underline line-clamp-1"
 									// style={{ background: prob2color((Number(score) / (index + 1)) * 100) }}
-									style={{ background: prob2color(Number(score) * 100) }}
+									style={{
+										background: prob2color(Number(score) * 100),
+										maxWidth: 0.1 * window.innerWidth,
+									}}
 								>
-									{word.replaceAll('_', ' ')}
+									{`${word.replaceAll('_', ' ')}(${score})`}
 								</span>
 							</Tooltip>
 						</ClickAwayListener>
