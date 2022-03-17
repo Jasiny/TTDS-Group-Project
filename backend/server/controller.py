@@ -60,7 +60,7 @@ def adjust(word, score):
     num = num_good + num_bad
     score_good = np.tanh(num_good/num)
     score_bad = np.tanh(num_bad/num)
-    weight = 0.5 * (score_good - score_bad) + 1
+    weight = 0.1 * (score_good - score_bad) + 1
     return weight * score
 
 
@@ -97,11 +97,17 @@ def handle_search_request(request):
     return JsonResponse({'words': words})
 
 
-def handle_feedback_request(request):
+def handle_post_feedback_request(request):
     word = request.GET['word']
     feedback = request.GET['feedback']
     if feedback == '1':
         feedback_map_good[word] += 1
     elif feedback == '-1':
         feedback_map_bad[word] += 1
+    return JsonResponse({'text': 'success'})
+
+
+def handle_clear_feedback_request(request):
+    feedback_map_good.clear()
+    feedback_map_bad.clear()
     return JsonResponse({'text': 'success'})

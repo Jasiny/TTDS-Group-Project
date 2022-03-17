@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.urls import path
 
-from server.controller import handle_feedback_request, handle_search_request
+from server.controller import *
 
 urlpatterns = [
     path('api/search', handle_search_request),
-    path('api/feedback', handle_feedback_request),
+    path('api/postFeedback', handle_post_feedback_request),
+    path('api/clearFeedback', handle_clear_feedback_request),
 ]

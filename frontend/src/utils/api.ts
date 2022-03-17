@@ -15,4 +15,6 @@ export const getSearchResults = (
 }
 
 export const postFeedback = (word: string, feedback: number): Promise<PostFeedbackResponseProps> =>
-	API.get('feedback', { params: { word, feedback } }).then(({ data }) => data)
+	API.get('postFeedback', { params: { word, feedback } }).then(({ data }) => data)
+
+export const clearFeedback = () => API.get('clearFeedback').then(({ data }) => data)

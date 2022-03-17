@@ -8,6 +8,7 @@ import { EngineType, POSType, WordType } from '../utils/enums'
 const HomePage = () => {
 	const [results, setResults] = useState<GetSearchResultsResponseProps>()
 	const [example, setExample] = useState<string>()
+	const [showScore, setShowScore] = useState(false)
 	const [filter, setFilter] = useState({
 		engineType: EngineType.Neural,
 		wordType: WordType.All,
@@ -22,7 +23,10 @@ const HomePage = () => {
 		<main className="relative flex flex-col items-center mb-24 space-y-4 sm:space-y-6">
 			{/* setting button at right top corner */}
 			<div className="absolute right-4 top-1">
-				<SettingButton onExampleClicked={(example) => setExample(example)} />
+				<SettingButton
+					onExampleClicked={(example) => setExample(example)}
+					onShowScoreBtnClicked={(showScore) => setShowScore(showScore)}
+				/>
 			</div>
 			{/* logo */}
 			<div
@@ -45,6 +49,7 @@ const HomePage = () => {
 					<SearchResults
 						wordType={filter.wordType}
 						posType={filter.posType}
+						showScore={showScore}
 						results={results}
 					/>
 				</>

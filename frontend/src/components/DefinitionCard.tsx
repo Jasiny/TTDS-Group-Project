@@ -7,9 +7,10 @@ interface DefinitionCardProps {
 	word: string
 	pos: string[]
 	defitions: string[]
+	onFeedbackBtnClicked: () => void
 }
 
-const DefinitionCard = ({ word, pos, defitions }: DefinitionCardProps) => (
+const DefinitionCard = ({ word, pos, defitions, onFeedbackBtnClicked }: DefinitionCardProps) => (
 	<section className="px-4 py-2 space-y-1 text-left border rounded shadow">
 		<div className="text-2xl text-black capitalize">{word.replaceAll('_', ' ')}</div>
 		<div className="space-x-1 text-xl text-black">
@@ -32,10 +33,22 @@ const DefinitionCard = ({ word, pos, defitions }: DefinitionCardProps) => (
 		</div>
 		<div className="flex justify-end">
 			<ButtonGroup size="large">
-				<IconButton style={{ color: 'green' }} onClick={() => postFeedback(word, 1)}>
+				<IconButton
+					style={{ color: 'green' }}
+					onClick={() => {
+						postFeedback(word, 1)
+						onFeedbackBtnClicked()
+					}}
+				>
 					<SentimentSatisfiedAlt />
 				</IconButton>
-				<IconButton style={{ color: 'red' }} onClick={() => postFeedback(word, -1)}>
+				<IconButton
+					style={{ color: 'red' }}
+					onClick={() => {
+						postFeedback(word, -1)
+						onFeedbackBtnClicked()
+					}}
+				>
 					<SentimentVeryDissatisfied />
 				</IconButton>
 			</ButtonGroup>

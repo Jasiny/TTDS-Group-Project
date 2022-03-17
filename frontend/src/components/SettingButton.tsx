@@ -1,5 +1,6 @@
-import { Close, HelpOutline } from '@mui/icons-material'
+import { Close, Delete, HelpOutline } from '@mui/icons-material'
 import {
+	Alert,
 	Box,
 	Button,
 	Dialog,
@@ -7,17 +8,22 @@ import {
 	DialogTitle,
 	IconButton,
 	Link,
+	Snackbar,
+	Switch,
 	Tab,
 	Tabs,
 	Typography,
 } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import React, { SyntheticEvent, useState } from 'react'
+import React, { ChangeEvent, SyntheticEvent, useState } from 'react'
+import { useQueryClient } from 'react-query'
+import { clearFeedback } from '../utils/api'
 
 const examples = [
 	'a place with teacher and students',
 	'a place with doctors and patients',
 	'a road that cars can go through quickly',
+	'a container to drink water',
 	'best food in UK',
 ]
 
@@ -29,7 +35,7 @@ const TabPanel = ({ children, value, index, ...other }: TabPanelProps) => (
 		hidden={value !== index}
 		{...other}
 	>
-		{value === index && <Box sx={{ px: 5, py: 3 }}>{children}</Box>}
+		{value === index && <Box sx={{ px: 4, py: 2 }}>{children}</Box>}
 	</div>
 )
 
@@ -63,11 +69,20 @@ const SettingDialogTitle = ({ children, onClose, ...other }: DialogTitleProps) =
 
 interface SettingButtonProps {
 	onExampleClicked: (example: string) => void
+	onShowScoreBtnClicked: (showScore: boolean) => void
 }
 
-const SettingButton = ({ onExampleClicked }: SettingButtonProps) => {
+const SettingButton = ({ onExampleClicked, onShowScoreBtnClicked }: SettingButtonProps) => {
+	const queryClient = useQueryClient()
 	const [tabvalue, setTabValue] = useState(0)
+	const [checked, setChecked] = useState(false)
+	const [showSnackbar, setShowSnackbar] = useState(false)
 	const [isDialogOpen, setIsDialogOpen] = useState(false)
+
+	const handleSwitchChange = ({ target: { checked } }: ChangeEvent<HTMLInputElement>) => {
+		setChecked(checked)
+		onShowScoreBtnClicked(checked)
+	}
 
 	return (
 		<>
@@ -106,7 +121,8 @@ const SettingButton = ({ onExampleClicked }: SettingButtonProps) => {
 							}
 						>
 							<Tab label="About" id={`tab-${0}`} />
-							<Tab label="Term of use" id={`tab-${1}`} />
+							<Tab label="System" id={`tab-${1}`} />
+							<Tab label="Term of use" id={`tab-${2}`} />
 						</Tabs>
 						{/* ================================================================ */}
 						<TabPanel value={tabvalue} index={0}>
@@ -118,7 +134,7 @@ const SettingButton = ({ onExampleClicked }: SettingButtonProps) => {
 								dictionary searching.
 							</Typography>
 							<Typography variant="h6" gutterBottom>
-								Q: What is this reverse dictionary?
+								Q: What is reverse dictionary?
 							</Typography>
 							<Typography variant="body1" gutterBottom>
 								A: Reverse dictionary is a tool that you can query a description
@@ -146,6 +162,27 @@ const SettingButton = ({ onExampleClicked }: SettingButtonProps) => {
 							</div>
 						</TabPanel>
 						<TabPanel value={tabvalue} index={1}>
+							<div className="flex items-center space-x-1">
+								<Typography variant="h6">
+									Clear all feedback influences on server:
+								</Typography>
+								<IconButton
+									onClick={() => {
+										clearFeedback()
+										setShowSnackbar(true)
+										setIsDialogOpen(false)
+										queryClient.refetchQueries('search')
+									}}
+								>
+									<Delete />
+								</IconButton>
+							</div>
+							<div className="flex items-center space-x-1">
+								<Typography variant="h6">Show relevant score:</Typography>
+								<Switch checked={checked} onChange={handleSwitchChange} />
+							</div>
+						</TabPanel>
+						<TabPanel value={tabvalue} index={2}>
 							<Typography variant="body1" gutterBottom>
 								The website was built by TTDS Group 34.
 							</Typography>
@@ -154,8 +191,8 @@ const SettingButton = ({ onExampleClicked }: SettingButtonProps) => {
 								data and your searching records will not be stored on the server.
 								However, your feedback on each word (the face icon you may click on
 								the definition card) will be sent to the server but we only save it
-								in the memory rather than in physical disk. After restarting the
-								server, all your feedback data will be deleted.
+								in the memory rather than in physical disk. You can click the button
+								in SYSTEM tab to delete your feedback data.
 							</Typography>
 							<Typography variant="body1" gutterBottom>
 								When building the website, we used the following properties:
@@ -203,6 +240,14 @@ const SettingButton = ({ onExampleClicked }: SettingButtonProps) => {
 					</Box>
 				</DialogContent>
 			</SettingDialog>
+			<Snackbar
+				open={showSnackbar}
+				autoHideDuration={3000}
+				onClose={() => setShowSnackbar(false)}
+				anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+			>
+				<Alert severity="success">Cleared!</Alert>
+			</Snackbar>
 		</>
 	)
 }
