@@ -38,3 +38,14 @@ cd backend && pip install -r requirements.txt && python manage.py runserver
 `pip install -r requirements.txt`: install all required dependencies
 
 `python manage.py runserver`: start dev sever at http://localhost:8000
+
+## Deployment
+
+- Pull latest files: `git pull origin main`
+- Build frontend: `cd frontend && npm run build`
+- Check nginx status: `service nginx status`
+- Stop the original apache2 process: `fuser -k 80/tcp`
+- Start nginx: `service nginx start`
+- Check uwsgi status: `ps -aux | grep uwsgi`
+- Kill uwsgi processes: `sudo pkill -f uwsgi -9`
+- Start uwsgi: `uwsgi backend/server/uwsgi.ini`
