@@ -1,4 +1,12 @@
-import { Alert, ClickAwayListener, Fade, Snackbar, Tooltip } from '@mui/material'
+import {
+	Alert,
+	ClickAwayListener,
+	Fade,
+	Snackbar,
+	Tooltip,
+	useMediaQuery,
+	useTheme,
+} from '@mui/material'
 import React, { useState } from 'react'
 import { useQueryClient } from 'react-query'
 import { POSType, WordType } from '../utils/enums'
@@ -19,6 +27,7 @@ const SearchResults = ({
 }: SearchResultsProps) => {
 	const [clickedIndex, setClickedIndex] = useState<number | undefined>(undefined)
 	const [showSnackbar, setShowSnackbar] = useState(false)
+	const bigScreen = useMediaQuery(useTheme().breakpoints.up('sm'))
 	const queryClient = useQueryClient()
 
 	const score2color = (scoreString: string, i: number) => {
@@ -36,7 +45,13 @@ const SearchResults = ({
 
 	return (
 		<>
-			<section className="grid grid-cols-3 gap-y-1 sm:grid-flow-col sm:grid-rows-25 md:grid-rows-20">
+			<section
+				className={
+					bigScreen
+						? 'grid w-full gap-y-1 grid-flow-col sm:grid-rows-25 md:grid-rows-20 px-40'
+						: 'grid w-full gap-y-1 grid-cols-2 px-4'
+				}
+			>
 				{removeDuplicates(words)
 					.filter(({ word }) => {
 						const isPhrase = word.includes('_')
@@ -59,7 +74,7 @@ const SearchResults = ({
 					.map(({ word, pos, defitions, score }, index) => (
 						<div
 							key={index}
-							className="flex justify-between pl-2 space-x-4 text-lg text-right sm:pl-8 lg:pl-12"
+							className="flex justify-between pl-2 text-lg text-right sm:pl-8 lg:pl-12"
 						>
 							<span className="text-gray-500 tabular-nums">{`${index + 1}. `}</span>
 							<ClickAwayListener
@@ -69,10 +84,10 @@ const SearchResults = ({
 							>
 								<Tooltip
 									placement="right"
+									className="flex-1"
 									disableFocusListener
 									disableHoverListener
 									disableTouchListener
-									className="max-h-16"
 									TransitionComponent={Fade}
 									title={
 										<DefinitionCard
@@ -90,11 +105,8 @@ const SearchResults = ({
 								>
 									<span
 										onClick={() => setClickedIndex(index)}
-										className="flex-1 hover:cursor-pointer hover:underline line-clamp-1 bg-cyan-800"
-										style={{
-											background: score2color(score, index),
-											maxWidth: 0.1 * window.innerWidth,
-										}}
+										style={{ background: score2color(score, index) }}
+										className="hover:cursor-pointer hover:underline line-clamp-1 bg-cyan-800"
 									>
 										{`${word.replaceAll('_', ' ')}${
 											showScore ? ` (${score})` : ''
