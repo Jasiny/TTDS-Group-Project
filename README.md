@@ -1,4 +1,6 @@
-# TTDS Group Project
+# TTDS Group Project: A Reverse Dictionary Search Engine
+
+### 🎉 Version 1.0.0 is released on [findmywords.org](https://findmywords.org)!
 
 ## Team Members
 
